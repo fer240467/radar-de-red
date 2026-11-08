@@ -6,6 +6,7 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     width: 1000, height: 780, minWidth: 380, minHeight: 520,
+    show: !process.env.RADAR_SHOT && !process.env.RADAR_DEMO, // las capturas de prueba no aparecen en pantalla
     backgroundColor: '#0b0b0d', title: 'Radar de Red', autoHideMenuBar: true,
     icon: path.join(__dirname, 'ui', 'icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true },

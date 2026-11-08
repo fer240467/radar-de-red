@@ -18,9 +18,11 @@
 
   function card(d, { isNew = false, offline = false } = {}) {
     const el = document.createElement('article');
-    el.className = 'dev' + (isNew ? ' is-new' : '') + (offline ? ' off' : '');
+    el.className = 'dev' + (isNew ? ' is-new' : '') + (offline ? ' off' : '') + (!offline && d.alive === false ? ' sleeping' : '');
     const tags = [];
     if (isNew) tags.push('<span class="tag new">NUEVO</span>');
+    if (!offline && d.alive === true) tags.push('<span class="tag alive">🟢 Activo</span>');
+    if (!offline && d.alive === false) tags.push('<span class="tag sleep" title="Windows lo recuerda, pero ahora no contestó: está en reposo, apagado o recién se fue">💤 En reposo</span>');
     if (d.isSelf) tags.push('<span class="tag self">Esta PC</span>');
     if (d.random) tags.push('<span class="tag">MAC privada</span>');
     if (!offline) tags.push(`<span class="tag ${esc(d.confidence)}">${{ seguro: 'Identificado', probable: 'Probable', posible: 'Posible', desconocido: 'Sin identificar' }[d.confidence] || ''}</span>`);
@@ -81,6 +83,7 @@
 
     const unknown = last.devices.filter((d) => !names[d.mac] && (d.confidence === 'desconocido' || d.confidence === 'posible' || d.random)).length;
     $('sTotal').textContent = last.devices.length;
+    $('sActive').textContent = last.devices.filter((d) => d.alive !== false).length;
     $('sKnown').textContent = last.devices.length - unknown;
     $('sUnknown').textContent = unknown;
     $('sNew').textContent = last.newMacs.size;

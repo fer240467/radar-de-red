@@ -32,7 +32,7 @@
   </div>
 
   <section class="summary" id="summary" hidden>
-    <div class="chip"><b id="sTotal">0</b><span>conectados</span></div>
+    <div class="chip"><b id="sTotal">0</b><span>en la red · <b id="sActive" class="mini">0</b> activos</span></div>
     <div class="chip ok"><b id="sKnown">0</b><span>identificados</span></div>
     <div class="chip warn"><b id="sUnknown">0</b><span>por revisar</span></div>
     <div class="chip new"><b id="sNew">0</b><span>nuevos</span></div>
@@ -57,6 +57,8 @@
   <details class="help">
     <summary>¿Cómo identifica los equipos?</summary>
     <p>Recorre tu red local y usa varias pistas: el <b>fabricante</b> según la MAC, el <b>nombre</b> que da tu router, los nombres de equipos Windows, los <b>servicios</b> que anuncia cada aparato (Chromecast, AirPlay, impresoras…) y la <b>ficha UPnP</b> donde muchas teles y routers dicen su modelo.</p>
+    <p><b>🟢 Activo / 💤 En reposo:</b> “Activo” significa que el equipo contestó durante este escaneo. “En reposo” significa que Windows lo tiene registrado pero ahora no contestó: suele estar apagado, en reposo (como una tele apagada con el control) o recién desconectado.</p>
+    <p><b>Truco:</b> si no sabés cuál es un aparato, desenchufalo y escaneá de nuevo: el que pase a “sin conexión” es ese.</p>
     <p><b>MAC privada:</b> los celulares modernos usan una dirección inventada por privacidad, así que no se sabe su marca. Para reconocerlos, ponéles nombre con el lápiz ✏️, o cambiá el nombre del dispositivo en el propio celular.</p>
     <p>Solo mira tu propia red: no cambia nada en el router ni en los equipos.</p>
   </details>

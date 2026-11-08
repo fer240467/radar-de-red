@@ -277,6 +277,18 @@ async function arpTable(net) {
   return res;
 }
 
+/** Estado de cada vecino según Windows: Reachable = contestó recién. */
+async function neighborStates(net) {
+  const out = await run('powershell.exe', ['-NoProfile', '-Command',
+    `Get-NetNeighbor -AddressFamily IPv4 -ErrorAction SilentlyContinue | ForEach-Object { $_.IPAddress + ';' + $_.State }`]);
+  const st = {};
+  for (const line of out.split(/\r?\n/)) {
+    const [ip, s] = line.trim().split(';');
+    if (ip && s) st[ip] = s;
+  }
+  return st;
+}
+
 async function reverseName(ip, gw) {
   const r = new dns.promises.Resolver({ timeout: 1200, tries: 1 });
   if (gw) { try { r.setServers([gw]); } catch (e) { /* nada */ } }
@@ -314,7 +326,7 @@ function classify(d) {
   if (has(all, /shellyplug/i)) return ['iot', 'Enchufe inteligente (Shelly Plug)', 'seguro'];
   if (has(all, /shelly/i)) return ['iot', 'Dispositivo Shelly (relé, luz, sensor)', 'seguro'];
   if (d.samsungTv) return ['tv', 'Televisor Samsung', 'seguro'];
-  if (has(v, /samjin/i)) return ['iot', 'Dispositivo SmartThings (sensor o hub)', 'probable'];
+  if (has(v, /samjin/i)) return ['appliance', 'Electrodoméstico con Wi-Fi o SmartThings (ej. aire acondicionado)', 'posible'];
   if (has(v, /espressif|tuya|shelly|itead|sonoff|broadlink|lumi|wiz|signify|philips lighting|yeelight|meross/i) || svc.includes('_hap._tcp') || svc.includes('_esphomelib._tcp') || svc.includes('_matter._tcp'))
     return ['iot', 'Dispositivo inteligente (enchufe, luz, sensor…)', 'probable'];
   if (svc.includes('_companion-link._tcp') || has(all, /iphone|ipad/i)) return ['phone', 'iPhone / iPad', 'probable'];
@@ -323,7 +335,9 @@ function classify(d) {
   if (d.netbios || svc.includes('_smb._tcp') || svc.includes('_workstation._tcp') || has(v, /intel corporate|realtek|micro-star|asustek|giga-byte|dell|lenovo|hewlett|apple/i))
     return ['pc', 'Computadora / notebook', 'probable'];
   if (has(v, /tp-link|tenda|mercusys|huawei|zte|netgear|d-link|ubiquiti|mikrotik|linksys|asus/i)) return ['network', 'Equipo de red (repetidor, AP…)', 'probable'];
-  if (has(v, /samsung|lg electronics|whirlpool|bosch|haier|midea|electrolux|gree/i)) return ['appliance', 'Electrodoméstico o equipo ' + v.split(' ')[0], 'posible'];
+  // Samsung y LG fabrican celulares, teles y electrodomésticos: sin más pistas no se puede saber cuál es.
+  if (has(v, /samsung|lg electronics/i)) return ['unknown', 'Celular, tele o electrodoméstico ' + v.split(' ')[0], 'posible'];
+  if (has(v, /whirlpool|bosch|haier|midea|electrolux|gree/i)) return ['appliance', 'Electrodoméstico ' + v.split(' ')[0], 'posible'];
   return ['unknown', 'Desconocido', 'desconocido'];
 }
 
@@ -345,6 +359,23 @@ async function scan(onProgress = () => {}) {
 
   onProgress(60, 'Escuchando qué anuncia cada equipo…');
   const [mdns, ssdp] = await Promise.all([mdnsP, ssdpP]);
+
+  // Quién está activo: se le "toca la puerta" a cada equipo conocido y se espera que Windows
+  // termine de comprobarlo (los que quedan en "Probe" se vuelven a mirar).
+  onProgress(72, 'Comprobando quién está activo…');
+  const knownIps = Object.keys(arp).filter((ip) => ip !== net.ip);
+  const poke = async () => {
+    const s = dgram.createSocket('udp4'); s.on('error', () => {});
+    await new Promise((r) => s.bind(0, r));
+    for (let k = 0; k < 3; k++) for (const ip of knownIps) s.send(Buffer.from([0]), 9, ip);
+    await sleep(300); try { s.close(); } catch (e) { /* nada */ }
+  };
+  await poke(); await sleep(2500);
+  let states = await neighborStates(net);
+  if (knownIps.some((ip) => /^(Probe|Incomplete|Delay)$/i.test(states[ip] || ''))) {
+    await poke(); await sleep(2000);
+    states = await neighborStates(net);
+  }
 
   onProgress(80, 'Averiguando nombres…');
   const ips = Object.keys(arp);
@@ -391,6 +422,9 @@ async function scan(onProgress = () => {}) {
     d.model = ex.model || (d.ssdp && [d.ssdp.manufacturer, d.ssdp.modelName, d.ssdp.modelNumber].filter(Boolean).join(' ')) || txtModel || null;
     if (d.model) d.model = [...new Set(d.model.split(/\s+/))].join(' '); // quita palabras repetidas
     d.bestName = ex.name || (d.ssdp && d.ssdp.friendlyName) || d.mdnsNames[0] || d.netbios || d.hostname || null;
+    // Activo: contestó a la red ahora o respondió a alguna consulta. Si no, está en reposo o apagado.
+    d.state = states[ip] || null;
+    d.alive = d.isSelf || /^(Reachable|Permanent)$/i.test(d.state || '') || !!(nb[ip] || m || ssdp[ip] || extra[ip]);
     const [type, label, confidence] = classify(d);
     Object.assign(d, { type, label, confidence });
     return d;
