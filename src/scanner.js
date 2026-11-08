@@ -335,8 +335,11 @@ function classify(d) {
   if (svc.includes('_companion-link._tcp') || has(all, /iphone|ipad/i)) return ['phone', 'iPhone / iPad', 'probable'];
   if (has(all, /android|galaxy|redmi|xiaomi|poco|motorola|moto ?[a-z0-9]|pixel|huawei|honor|oppo|vivo|realme|oneplus|\bA\d{1,2}\b|\bS\d{1,2}\b|BVS/i) || d.random)
     return ['phone', d.random ? 'Celular o tablet (MAC privada)' : 'Celular o tablet', d.random ? 'probable' : 'probable'];
-  if (d.netbios || svc.includes('_smb._tcp') || svc.includes('_workstation._tcp') || has(v, /intel corporate|realtek|micro-star|asustek|giga-byte|dell|lenovo|hewlett|apple/i))
+  if (d.netbios || svc.includes('_smb._tcp') || svc.includes('_workstation._tcp') || has(v, /intel corporate|realtek|micro-star|asustek|giga-byte|dell|lenovo|hewlett|hp inc|apple/i))
     return ['pc', 'Computadora / notebook', 'probable'];
+  // Fabricantes de placas Wi-Fi que van casi siempre dentro de notebooks
+  if (has(v, /azurewave|liteon|lite-on|hon hai|cloud network technology|wistron|chicony|universal global scientific|intel wireless/i))
+    return ['pc', 'Notebook (placa Wi-Fi ' + v.split(/[ ,]/)[0] + ')', 'probable'];
   if (has(v, /tp-link|tenda|mercusys|huawei|zte|netgear|d-link|ubiquiti|mikrotik|linksys|asus/i)) return ['network', 'Equipo de red (repetidor, AP…)', 'probable'];
   // Samsung y LG fabrican celulares, teles y electrodomésticos: sin más pistas no se puede saber cuál es.
   if (has(v, /samsung|lg electronics/i)) return ['unknown', 'Celular, tele o electrodoméstico ' + v.split(' ')[0], 'posible'];

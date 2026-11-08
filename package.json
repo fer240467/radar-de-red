@@ -1,7 +1,7 @@
 {
   "name": "radar-de-red",
   "productName": "Radar de Red",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Descubre e identifica los equipos conectados a tu red Wi-Fi.",
   "main": "src/main.js",
   "author": "Fernando Montouliu",
