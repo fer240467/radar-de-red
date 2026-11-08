@@ -1,0 +1,5 @@
+node_modules/
+dist/
+tools/*.png
+tools/icon.html
+tools/limpiar-demo.js

@@ -1,0 +1,11 @@
+{"net":{"ip":"192.168.0.10","mask":"255.255.255.0","iface":"Wi-Fi","gateway":"192.168.0.1"},"time":0,"devices":[
+{"ip":"192.168.0.1","mac":"00:11:22:33:44:01","vendor":"TP-Link Technologies Co.,Ltd.","type":"router","label":"Router / módem","confidence":"seguro","bestName":"Archer AX20","model":"TP-Link Archer AX20","services":[],"mdnsNames":[],"isGateway":true},
+{"ip":"192.168.0.10","mac":"00:11:22:33:44:02","vendor":"Intel Corporate","type":"pc","label":"Esta computadora","confidence":"seguro","bestName":null,"services":[],"mdnsNames":[],"isSelf":true},
+{"ip":"192.168.0.12","mac":"00:11:22:33:44:03","vendor":"Samsung Electronics Co.,Ltd","type":"tv","label":"Televisor Samsung","confidence":"seguro","bestName":"Tele del living","model":"QN55Q60","services":["_airplay._tcp"],"mdnsNames":[]},
+{"ip":"192.168.0.15","mac":"6A:11:22:33:44:04","vendor":null,"random":true,"type":"phone","label":"Celular o tablet (MAC privada)","confidence":"probable","bestName":null,"services":[],"mdnsNames":[]},
+{"ip":"192.168.0.18","mac":"00:11:22:33:44:05","vendor":"Google, Inc.","type":"stream","label":"TV Box / Chromecast","confidence":"seguro","bestName":"Chromecast dormitorio","model":"Chromecast","services":["_googlecast._tcp"],"mdnsNames":[]},
+{"ip":"192.168.0.21","mac":"00:11:22:33:44:06","vendor":"Espressif Inc.","type":"iot","label":"Enchufe inteligente (Shelly Plug)","confidence":"seguro","bestName":"shellyplug-s-A1B2C3","model":"Shelly SHPLG-S","services":["_http._tcp"],"mdnsNames":[]},
+{"ip":"192.168.0.24","mac":"00:11:22:33:44:07","vendor":"HP Inc.","type":"printer","label":"Impresora","confidence":"seguro","bestName":"HP DeskJet 2700","model":"HP DeskJet 2700","services":["_ipp._tcp"],"mdnsNames":[]},
+{"ip":"192.168.0.30","mac":"00:11:22:33:44:08","vendor":"Dreame Technology (Suzhou) Limited","type":"vacuum","label":"Robot aspiradora","confidence":"probable","bestName":null,"services":[],"mdnsNames":[]},
+{"ip":"192.168.0.33","mac":"00:11:22:33:44:09","vendor":"Sony Interactive Entertainment Inc.","type":"console","label":"Consola de juegos","confidence":"probable","bestName":"PS5","services":[],"mdnsNames":[]}
+]}

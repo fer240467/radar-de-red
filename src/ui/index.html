@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+<title>Radar de Red</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="icon.svg">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img class="logo" src="icon.svg" alt="">
+    <div>
+      <h1>Radar de Red</h1>
+      <p class="sub" id="netInfo">Tocá “Escanear red” para empezar</p>
+    </div>
+  </div>
+  <div class="actions">
+    <label class="switch" title="Escanea solo cada 5 minutos y avisa si aparece un equipo nuevo">
+      <input type="checkbox" id="watch"><span>Vigilar</span>
+    </label>
+    <button class="primary" id="btnScan">Escanear red</button>
+  </div>
+</header>
+
+<main>
+  <div class="progress" id="progress" hidden>
+    <div class="bar"><div id="bar"></div></div>
+    <p id="progMsg"></p>
+  </div>
+
+  <section class="summary" id="summary" hidden>
+    <div class="chip"><b id="sTotal">0</b><span>conectados</span></div>
+    <div class="chip ok"><b id="sKnown">0</b><span>identificados</span></div>
+    <div class="chip warn"><b id="sUnknown">0</b><span>por revisar</span></div>
+    <div class="chip new"><b id="sNew">0</b><span>nuevos</span></div>
+  </section>
+
+  <div class="tools" id="tools" hidden>
+    <input type="search" id="filter" placeholder="Buscar por nombre, fabricante, IP o MAC…">
+    <select id="sort">
+      <option value="ip">Ordenar por IP</option>
+      <option value="type">Ordenar por tipo</option>
+      <option value="name">Ordenar por nombre</option>
+    </select>
+  </div>
+
+  <section id="list" class="grid"></section>
+
+  <details class="offline" id="offlineBox" hidden>
+    <summary>Vistos antes, sin conexión ahora (<span id="offCount">0</span>)</summary>
+    <section id="offList" class="grid"></section>
+  </details>
+
+  <details class="help">
+    <summary>¿Cómo identifica los equipos?</summary>
+    <p>Recorre tu red local y usa varias pistas: el <b>fabricante</b> según la MAC, el <b>nombre</b> que da tu router, los nombres de equipos Windows, los <b>servicios</b> que anuncia cada aparato (Chromecast, AirPlay, impresoras…) y la <b>ficha UPnP</b> donde muchas teles y routers dicen su modelo.</p>
+    <p><b>MAC privada:</b> los celulares modernos usan una dirección inventada por privacidad, así que no se sabe su marca. Para reconocerlos, ponéles nombre con el lápiz ✏️, o cambiá el nombre del dispositivo en el propio celular.</p>
+    <p>Solo mira tu propia red: no cambia nada en el router ni en los equipos.</p>
+  </details>
+
+  <footer><p>Radar de Red · solo lectura · los nombres que pongas se guardan en esta PC.</p></footer>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

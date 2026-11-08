@@ -1,0 +1,19 @@
+{
+  "name": "radar-de-red",
+  "productName": "Radar de Red",
+  "version": "1.0.0",
+  "description": "Descubre e identifica los equipos conectados a tu red Wi-Fi.",
+  "main": "src/main.js",
+  "author": "Fernando Montouliu",
+  "license": "MIT",
+  "scripts": { "start": "electron .", "dist": "electron-builder --win portable" },
+  "devDependencies": { "electron": "31.7.7", "electron-builder": "24.13.3" },
+  "build": {
+    "appId": "uy.radardered.app",
+    "productName": "Radar de Red",
+    "files": ["src/**/*", "data/oui.json", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": [{ "target": "portable", "arch": ["x64"] }], "icon": "build/icon.ico" },
+    "portable": { "artifactName": "RadarDeRed-${version}.exe" }
+  }
+}
