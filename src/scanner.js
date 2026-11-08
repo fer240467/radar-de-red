@@ -204,7 +204,10 @@ function httpGet(url, ms = 2500) {
     } catch (e) { res(''); }
   });
 }
-const xmlTag = (x, t) => { const m = x.match(new RegExp(`<${t}[^>]*>([^<]*)</${t}>`, 'i')); return m ? m[1].trim() : null; };
+/** Decodifica entidades HTML (&quot; &amp; &#39;…) que algunos equipos mandan en sus nombres. */
+const unent = (s) => (s == null ? s : String(s).replace(/&quot;/g, '"').replace(/&apos;|&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+  .replace(/&#(\d+);/g, (_m, n) => String.fromCharCode(+n)).replace(/&amp;/g, '&'));
+const xmlTag = (x, t) => { const m = x.match(new RegExp(`<${t}[^>]*>([^<]*)</${t}>`, 'i')); return m ? unent(m[1].trim()) : null; };
 
 function ssdpScan(ms) {
   return new Promise((resolve) => {
@@ -391,7 +394,7 @@ async function scan(onProgress = () => {}) {
       const j = await httpGet(`http://${ip}:8001/api/v2/`, 1500);
       try {
         const o = JSON.parse(j);
-        if (o && o.device) extra[ip] = { samsungTv: true, name: o.device.name || o.name, model: o.device.modelName || o.device.model };
+        if (o && o.device) extra[ip] = { samsungTv: true, name: unent(o.device.name || o.name), model: unent(o.device.modelName || o.device.model) };
       } catch (e) { /* no es una tele Samsung o está apagada */ }
     } else if (/espressif/i.test(v)) {
       const j = await httpGet(`http://${ip}/shelly`, 1500);
